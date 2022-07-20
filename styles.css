@@ -1,0 +1,211 @@
+:root {
+  --card-background-color: #e8edee;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  margin-block-end: 0;
+  margin-block-start: 0;
+  font-weight: 500;
+}
+
+html,
+body {
+  background-color: #93c8d5;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1#my-library {
+  font-size: 70px;
+}
+
+header,
+div.form,
+div.books {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  margin: 28px auto 18px auto;
+  background-color: #b8dbe4;
+  border-radius: 5px;
+  box-shadow: 4px 4px 15px 1px rgba(0, 0, 0, 0.05);
+  border: 3px solid rgba(127, 167, 179, 0.5);
+}
+
+div.form {
+  margin: 38px auto;
+  height: auto;
+  justify-content: flex-start;
+  padding: 28px;
+  font-size: 20px;
+}
+
+div.form-content {
+  display: flex;
+  gap: 38px;
+}
+
+div.labels,
+div.inputs {
+  margin: 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: right;
+}
+
+div.inputs {
+  width: 300px;
+}
+
+div.labels {
+  width: 150px;
+}
+
+input,
+textarea,
+button {
+  background-color: #e8edee;
+  padding: 5px;
+  border-width: 1px;
+  border-color: rgba(192, 205, 209, 0.5);
+  border-style: outset;
+  border-radius: 3px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border: 1px solid black;
+}
+
+label {
+  font-weight: 500;
+}
+
+label.checkbox {
+  text-align: left;
+  display: inline-flex;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox > input {
+  height: 25px;
+  width: 25px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  outline: none;
+  transition-duration: 0.3s;
+  background-color: #e8edee;
+  cursor: pointer;
+  margin: 3px 0 0 0;
+}
+
+.checkbox > input:focus,
+button#submit:focus {
+  border: 1px solid black;
+  background-color: #e8edee;
+}
+
+.checkbox > input:checked + span::before {
+  content: "\2713";
+  display: block;
+  text-align: center;
+  color: #41b883;
+  position: absolute;
+  left: 0.3rem;
+  top: 0.1rem;
+}
+
+.checkbox > input:active {
+  border: 2px solid #34495e;
+}
+
+button#submit:hover {
+  background-color: #ffffff;
+}
+
+div.books {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 38px 0;
+  gap: 28px;
+}
+
+div.row {
+  display: flex;
+  gap: 28px;
+}
+
+div.card {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  height: 200px;
+  background-color: var(--card-background-color);
+  border-radius: 5px;
+  box-shadow: 4px 4px 15px 1px rgba(0, 0, 0, 0.05);
+  border: 3px solid rgba(127, 167, 179, 0.5);
+}
+
+p.card-content {
+  text-align: center;
+}
+
+img.card-image {
+  display: block;
+  position: absolute;
+  width: 150px;
+  height: 200px;
+  background-image: url(https://mpd-biblio-covers.imgix.net/9781250827630.jpg);
+  opacity: 0.1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+div.header-icon {
+  display: flex;
+}
+
+img.book-icon {
+  width: 100px;
+  height: auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+#add-book-wrap {
+  margin-top: 15px;
+  font-size: 100px;
+}
+
+#add-book {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  height: 200px;
+  text-align: center;
+  font-weight: 800;
+  user-select: none;
+  transition: font-size 0.1s;
+  -moz-transition: font-size 0.1s; /* Firefox 4 */
+  -webkit-transition: font-size 0.1s; /* Safari and Chrome */
+  font-size: 120px;
+}
+
+.card#new-book:hover {
+  --card-background-color: #fff;
+}

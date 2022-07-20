@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Library</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="images/Book_ICO.ico" />
+  </head>
+  <body>
+    <header>
+      <div class="header-icon">
+        <img src="images/Book_Icon.png" alt="Book icon" class="book-icon" />
+        <h1 id="my-library">My Library</h1>
+      </div>
+      <p id="my-library-description">
+        A collection of books that I have read or am interested in reading.
+      </p>
+    </header>
+    <div id="myModal" class="modal">
+        <div class="form">
+          <h1 id="new-book">New Book</h1>
+          <div class="form-content">
+            <div class="labels">
+              <label for="title">Title</label>
+              <label for="author">Author</label>
+              <label for="page-count">Page Count</label>
+              <label for="image-url">Image URL</label>
+              <label for="finished">Finished</label>
+              <label for="summary">Summary</label>
+            </div>
+            <div class="inputs">
+              <input type="text" id="title" placeholder="Cat in the Hat" />
+              <input type="text" id="author" placeholder="Dr. Seuss" />
+              <input type="text" id="page-count" placeholder="287" />
+              <input
+                type="text"
+                id="image-url"
+                placeholder="https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+              />
+              <label class="checkbox">
+                <input type="checkbox" id="finished" />
+                <span></span>
+              </label>
+              <textarea
+                name="summary"
+                id="summary"
+                cols="30"
+                rows="10"
+                placeholder="The cat had a hat on his head..."
+              ></textarea>
+              <button id="submit" type="submit">Add Book</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="books">
+      <div class="row">
+        <div class="card">
+          <img
+            class="card-image"
+            src="https://mpd-biblio-covers.imgix.net/9781250827630.jpg"
+            alt="Card Background Image"
+          />
+          <p class="card-content">The Expectation Effect</p>
+          <p class="card-content">by David Robson</p>
+          <p class="card-content">Unfinished</p>
+        </div>
+        <div class="card" id="new-book">
+          <p id="add-book">+</p>
+        </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
