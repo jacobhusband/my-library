@@ -152,6 +152,9 @@ div.row {
 div.card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 5px;
   width: 150px;
   height: 200px;
   background-color: var(--card-background-color);
@@ -162,6 +165,7 @@ div.card {
 
 p.card-content {
   text-align: center;
+  margin: 0;
 }
 
 img.card-image {
@@ -208,4 +212,23 @@ img.book-icon {
 
 .card#new-book:hover {
   --card-background-color: #fff;
+}
+
+button.remove-book {
+  z-index: 2;
+  width: 100px;
+}
+
+label.book-card {
+  gap: 10px;
+}
+
+span.finished {
+  margin-top: 5px;
+  user-select: none;
+}
+
+.checkbox.book-card > input:checked + span::before {
+  left: 0.4rem;
+  top: 0.2rem;
 }
