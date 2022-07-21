@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Library</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" href="images/Book_ICO.ico" />
+    <link rel="icon" href="images/ICO.ico" />
   </head>
   <body>
     <header>
@@ -20,13 +20,12 @@
     </header>
     <div id="myModal" class="modal">
         <div class="form">
-          <h1 id="new-book">New Book</h1>
+          <h1>New Book</h1>
           <div class="form-content">
             <div class="labels">
               <label for="title">Title</label>
               <label for="author">Author</label>
               <label for="page-count">Page Count</label>
-              <label for="image-url">Image URL</label>
               <label for="finished">Finished</label>
               <label for="summary">Summary</label>
             </div>
@@ -34,11 +33,6 @@
               <input type="text" id="title" placeholder="Cat in the Hat" />
               <input type="text" id="author" placeholder="Dr. Seuss" />
               <input type="text" id="page-count" placeholder="287" />
-              <input
-                type="text"
-                id="image-url"
-                placeholder="https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
-              />
               <label class="checkbox">
                 <input type="checkbox" id="finished" />
                 <span></span>
@@ -56,6 +50,7 @@
         </div>
     </div>
     <div class="books">
+      <h1>The Bookshelf</h1>
       <div class="row">
         <div class="card">
           <p class="card-content">The Expectation Effect</p>
@@ -64,7 +59,10 @@
             <input type="checkbox">
             <span class="finished">Finished</span>
           </label>
-          <button class="remove-book">Remove</button>
+          <div class="card-buttons">
+            <button class="remove-book">Info</button>
+            <button class="remove-book">Remove</button>
+          </div>
         </div>
         <div class="card" id="new-book">
           <p id="add-book">+</p>

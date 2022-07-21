@@ -6,7 +6,14 @@
   box-sizing: border-box;
 }
 
-h1 {
+*:focus {
+  outline: none;
+  border: 1px solid black;
+  background-color: #e8edee;
+}
+
+h1,
+label {
   margin-block-end: 0;
   margin-block-start: 0;
   font-weight: 500;
@@ -18,8 +25,15 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h1#my-library {
-  font-size: 70px;
+input,
+textarea,
+button {
+  background-color: #e8edee;
+  padding: 5px;
+  border-width: 1px;
+  border-color: rgba(192, 205, 209, 0.5);
+  border-style: outset;
+  border-radius: 3px;
 }
 
 header,
@@ -32,10 +46,10 @@ div.books {
   justify-content: center;
   align-items: center;
   margin: 28px auto 18px auto;
-  background-color: #b8dbe4;
+  background-color: #ebebeb;
   border-radius: 5px;
   box-shadow: 4px 4px 15px 1px rgba(0, 0, 0, 0.05);
-  border: 3px solid rgba(127, 167, 179, 0.5);
+  border: 3px solid rgba(160, 79, 79, 0.5);
 }
 
 div.form {
@@ -54,39 +68,15 @@ div.form-content {
 div.labels,
 div.inputs {
   margin: 28px 0;
+  width: 300px;
   display: flex;
   flex-direction: column;
   gap: 28px;
   text-align: right;
 }
 
-div.inputs {
-  width: 300px;
-}
-
 div.labels {
   width: 150px;
-}
-
-input,
-textarea,
-button {
-  background-color: #e8edee;
-  padding: 5px;
-  border-width: 1px;
-  border-color: rgba(192, 205, 209, 0.5);
-  border-style: outset;
-  border-radius: 3px;
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border: 1px solid black;
-}
-
-label {
-  font-weight: 500;
 }
 
 label.checkbox {
@@ -111,12 +101,6 @@ label.checkbox {
   margin: 3px 0 0 0;
 }
 
-.checkbox > input:focus,
-button#submit:focus {
-  border: 1px solid black;
-  background-color: #e8edee;
-}
-
 .checkbox > input:checked + span::before {
   content: "\2713";
   display: block;
@@ -135,7 +119,12 @@ button#submit:hover {
   background-color: #ffffff;
 }
 
+h1#my-library {
+  font-size: 70px;
+}
+
 div.books {
+  background-color: rgb(255, 187, 187);
   height: auto;
   display: flex;
   flex-direction: column;
@@ -160,12 +149,13 @@ div.card {
   background-color: var(--card-background-color);
   border-radius: 5px;
   box-shadow: 4px 4px 15px 1px rgba(0, 0, 0, 0.05);
-  border: 3px solid rgba(127, 167, 179, 0.5);
+  border: 3px solid rgba(160, 79, 79, 0.5);
 }
 
 p.card-content {
   text-align: center;
   margin: 0;
+  font-weight: 500;
 }
 
 img.card-image {
@@ -192,11 +182,6 @@ img.book-icon {
   background-position: center center;
 }
 
-#add-book-wrap {
-  margin-top: 15px;
-  font-size: 100px;
-}
-
 #add-book {
   margin-block-start: 0;
   margin-block-end: 0;
@@ -216,7 +201,12 @@ img.book-icon {
 
 button.remove-book {
   z-index: 2;
-  width: 100px;
+  margin-bottom: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+button.remove-book:hover {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 label.book-card {
@@ -231,4 +221,18 @@ span.finished {
 .checkbox.book-card > input:checked + span::before {
   left: 0.4rem;
   top: 0.2rem;
+}
+
+.checkbox.book-card:hover {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+div.card-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+div#myModal {
+  display: none;
 }

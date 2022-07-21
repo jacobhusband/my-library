@@ -1,4 +1,10 @@
 const addBookButton = document.getElementById("submit");
+const title = document.getElementById("title");
+const author = document.getElementById("author");
+const pageCount = document.getElementById("page-count");
+const finished = document.getElementById("finished");
+const summary = document.getElementById("summary");
+
 let bookObj = {
   title: "title",
   author: "author",
@@ -8,7 +14,10 @@ let bookObj = {
   summary: "summary",
 };
 
-addBookButton.addEventListener("click", () => {
-  const title = document.getElementById("title").textContent;
-  console.log(title);
+addBookButton.addEventListener("click", (event) => {
+  console.log(title.value);
+  console.log(author.value);
+  console.log(pageCount.value);
+  console.log(finished.checked);
+  console.log(summary.value);
 });
