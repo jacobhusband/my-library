@@ -18,11 +18,9 @@ addBookButton.addEventListener("click", (event) => {
     finished: finished.checked,
     summary: summary.value,
   };
-
+  updateBookshelf(bookObj);
   // Hide modal
   modal.style.display = "none";
-
-  updateBookshelf(bookObj);
 });
 
 // When the user clicks on <span> (x), close the modal
@@ -114,11 +112,8 @@ function addToBookshelf(title, count, finished = false) {
   addBookCard.id = "add-book";
   addBookCard.textContent = "+";
 
-  // // Remove plus card
+  // Grab row element
   const newBookRowElement = document.getElementsByClassName("row")[0];
-  // const newBookCardElement = document.getElementById("new-book");
-  // console.log(newBookRowElement);
-  // newBookRowElement.removeChild(newBookCardElement);
 
   // Add card DOM structure and append to parent
   checkboxLabel.append(checkboxInput, checkboxSpan);
@@ -126,18 +121,9 @@ function addToBookshelf(title, count, finished = false) {
   card.append(cardTitle, checkboxLabel, cardButtons);
   newBookRowElement.appendChild(card);
 
-  // // Create new plus card
-  // const newBookCardAddition = document.createElement("div");
-  // const newBookParagraphAddition = document.createElement("p");
-  // newBookCardAddition.className = "card";
-  // newBookCardAddition.id = "new-book";
-  // newBookParagraphAddition.id = "add-book";
-  // newBookParagraphAddition.textContent = "+";
-  // newBookCardAddition.appendChild(newBookParagraphAddition);
-  // newBookRowElement.appendChild(newBookCardAddition);
-
   // Add event listeners for the new book and all the checkboxes
   listenForCheckboxClicks();
+  listenForInfoClicks();
   listenForRemoveClicks();
 }
 
@@ -168,20 +154,40 @@ function listenForRemoveClicks() {
   });
 }
 
+function listenForInfoClicks() {
+  let infoButtons = Array.from(document.getElementsByClassName("info-button"));
+  infoButtons[infoButtons.length - 1].addEventListener("click", (event) => {
+    let cardParent =
+      event.currentTarget.parentNode.parentNode.getAttribute("data-id");
+    console.log(cardParent);
+    // Open modal
+    modal.style.display = "block";
+
+    // Change button from add book to update book and title to Book Information
+    document.getElementsByClassName("modal-title")[0].textContent =
+      "Book Information";
+
+    document.getElementById("submit").textContent = "Update Book";
+
+    // Remove the event listener
+
+    // Add a new event listener
+
+    // Update the info into the library array
+
+    // Close modal
+
+    // Change button to say add book from update book
+
+    updateBookshelf();
+  });
+}
+
 function searchLibraryByTitle(title, finished) {
   library.forEach((book) => {
     if (book.title === title) {
       book.finished = finished;
     }
-  });
-}
-
-function listenForInfoClicks() {
-  let infoButtons = Array.from(document.getElementsByClassName("info-button"));
-  infoButtons[infoButtons.length - 1].addEventListener("click", (event) => {
-    let cardParent = event.currentTarget.parentNode.parentNode;
-    library.splice(cardParent.dataset.id - 1, 1);
-    updateBookshelf();
   });
 }
 
