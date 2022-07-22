@@ -21,7 +21,7 @@ label {
 
 html,
 body {
-  background-color: #93c8d5;
+  background-color: #522727;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -134,7 +134,7 @@ h1#my-library {
 }
 
 div.books {
-  background-color: rgb(255, 187, 187);
+  background-color: #ebebeb;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -221,13 +221,7 @@ img.book-icon {
   --card-background-color: rgb(235, 235, 235);
 }
 
-button.remove-book {
-  z-index: 2;
-  margin-bottom: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-}
-
-button.remove-book:hover {
+button.card-button:hover {
   color: rgba(0, 0, 0, 0.5);
 }
 
@@ -255,7 +249,7 @@ div.modal {
   position: fixed; /* Stay in place */
   z-index: 3; /* Sit on top */
   left: 0;
-  top: 0;
+  top: -10px;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
@@ -295,10 +289,10 @@ span.close {
   text-align: right;
 }
 
-#info-button {
+.info-button {
   background-color: #4781ec;
 }
 
-#remove-button {
+.remove-button {
   background-color: #bb1f1f;
 }

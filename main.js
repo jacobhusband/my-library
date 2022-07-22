@@ -6,30 +6,23 @@ const finished = document.getElementById("finished");
 const summary = document.getElementById("summary");
 const modal = document.getElementById("myModal");
 const closeModal = document.getElementById("close-modal");
-let cardCount = 2;
-
-createNewBook();
-
-let bookObj = {
-  title: "title",
-  author: "author",
-  pageCount: 1,
-  imageURL: "imageURL",
-  finished: false,
-  summary: "summary",
-};
 
 let library = [];
 
 addBookButton.addEventListener("click", (event) => {
-  bookObj.title = title.value;
-  bookObj.author = author.value;
-  bookObj.pageCount = pageCount.value;
-  bookObj.finished = finished.value;
-  bookObj.summary = summary.value;
-  library.push[bookObj];
-  updateLibrary();
+  // Update book object
+  let bookObj = {
+    title: title.value,
+    author: author.value,
+    pageCount: pageCount.value,
+    finished: finished.checked,
+    summary: summary.value,
+  };
+
+  // Hide modal
   modal.style.display = "none";
+
+  updateBookshelf(bookObj);
 });
 
 // When the user clicks on <span> (x), close the modal
@@ -44,7 +37,48 @@ window.onclick = function (event) {
   }
 };
 
-function updateLibrary() {
+function updateBookshelf(bookObj = undefined) {
+  let count = 1;
+
+  if (bookObj !== undefined) {
+    // Add book object to library
+    library.push(bookObj);
+  }
+
+  // Remove all cards from bookshelf
+  const rowElement = document.getElementsByClassName("row")[0];
+  let cardElements = Array.from(document.getElementsByClassName("card"));
+  cardElements.forEach((card) => {
+    rowElement.removeChild(card);
+  });
+
+  // Add all books to bookshelf
+  library.forEach((book) => {
+    // Create a counter for book objects
+    addToBookshelf(book.title, count);
+    count++;
+  });
+
+  createAndAddPlusCard(rowElement);
+  listenForNewBook();
+}
+
+function createAndAddPlusCard(rowElement) {
+  // Create plus card
+  const newBookCardAddition = document.createElement("div");
+  const newBookParagraphAddition = document.createElement("p");
+  newBookCardAddition.className = "card";
+  newBookCardAddition.id = "new-book";
+  newBookParagraphAddition.id = "add-book";
+  newBookParagraphAddition.textContent = "+";
+
+  // Add plus card
+  newBookCardAddition.appendChild(newBookParagraphAddition);
+  rowElement.appendChild(newBookCardAddition);
+}
+
+function addToBookshelf(title, count) {
+  // Create DOM elements to make book card
   const card = document.createElement("div");
   const cardTitle = document.createElement("p");
   const checkboxLabel = document.createElement("label");
@@ -56,53 +90,59 @@ function updateLibrary() {
   const newBookCard = document.createElement("div");
   const addBookCard = document.createElement("p");
 
+  // Add classes, ids, and data types to elements
   card.className = "card";
-  card["data-id"] = `${cardCount}`;
+  card.dataset.id = `${count}`;
   cardTitle.className = "card-content";
-  cardTitle.textContent = `${bookObj.title}`;
+  cardTitle.textContent = title;
   checkboxLabel.className = "checkbox cardcheck";
   checkboxInput.type = "checkbox";
   checkboxSpan.className = "finished";
   cardButtons.className = "card-buttons";
-  cardInfoButton.className = "remove-book";
-  cardInfoButton.id = "info-button";
+  cardInfoButton.className = "info-button card-button";
   cardInfoButton.textContent = "Info";
-  cardRemoveButton.className = "remove-book";
-  cardRemoveButton.id = "remove-button";
+  cardRemoveButton.className = "remove-button card-button";
   cardRemoveButton.textContent = "Remove";
   newBookCard.className = "card";
   newBookCard.id = "new-book";
   addBookCard.id = "add-book";
   addBookCard.textContent = "+";
 
+  // // Remove plus card
   const newBookRowElement = document.getElementsByClassName("row")[0];
-  const newBookCardElement = document.getElementById("new-book");
-  newBookRowElement.removeChild(newBookCardElement);
+  // const newBookCardElement = document.getElementById("new-book");
+  // console.log(newBookRowElement);
+  // newBookRowElement.removeChild(newBookCardElement);
+
+  // Add card DOM structure and append to parent
   checkboxLabel.append(checkboxInput, checkboxSpan);
   cardButtons.append(cardInfoButton, cardRemoveButton);
   card.append(cardTitle, checkboxLabel, cardButtons);
   newBookRowElement.appendChild(card);
 
-  const newBookCardAddition = document.createElement("div");
-  const newBookParagraphAddition = document.createElement("p");
+  // // Create new plus card
+  // const newBookCardAddition = document.createElement("div");
+  // const newBookParagraphAddition = document.createElement("p");
+  // newBookCardAddition.className = "card";
+  // newBookCardAddition.id = "new-book";
+  // newBookParagraphAddition.id = "add-book";
+  // newBookParagraphAddition.textContent = "+";
+  // newBookCardAddition.appendChild(newBookParagraphAddition);
+  // newBookRowElement.appendChild(newBookCardAddition);
 
-  newBookCardAddition.className = "card";
-  newBookCardAddition.id = "new-book";
-
-  newBookParagraphAddition.id = "add-book";
-  newBookParagraphAddition.textContent = "+";
-
-  newBookCardAddition.appendChild(newBookParagraphAddition);
-  newBookRowElement.appendChild(newBookCardAddition);
-  createNewBook();
-  cardCount++;
+  // Add event listeners for the new book and all the checkboxes
+  listenForCheckboxClicks();
+  listenForRemoveClicks();
 }
 
-function createNewBook() {
+function listenForNewBook() {
   let newBook = document.getElementById("new-book");
   newBook.addEventListener("click", (event) => {
     modal.style.display = "block";
   });
+}
+
+function listenForCheckboxClicks() {
   Array.from(document.getElementsByClassName("cardcheck")).forEach(
     (checkbox) => {
       checkbox.addEventListener("click", (event) => {
@@ -112,6 +152,17 @@ function createNewBook() {
   );
 }
 
+function listenForRemoveClicks() {
+  let removeButtons = Array.from(
+    document.getElementsByClassName("remove-button")
+  );
+  removeButtons[removeButtons.length - 1].addEventListener("click", (event) => {
+    let cardParent = event.currentTarget.parentNode.parentNode;
+    library.splice(cardParent.dataset.id - 1, 1);
+    updateBookshelf();
+  });
+}
+
 function updateCardBorderColor(event) {
   if (event.target.checked) {
     event.currentTarget.parentNode.style.borderColor = "rgba(0, 95, 16, 0.5)";
@@ -119,3 +170,5 @@ function updateCardBorderColor(event) {
     event.currentTarget.parentNode.style.borderColor = "rgba(255, 2, 2, 0.5)";
   }
 }
+
+listenForNewBook();
