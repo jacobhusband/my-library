@@ -20,7 +20,10 @@
     </header>
     <div id="myModal" class="modal">
         <div class="form">
-          <h1>New Book</h1>
+          <div class="modal-header">
+            <h1 class="modal-title">New Book</h1>
+            <span class="close" id="close-modal">&times;</span>
+          </div>
           <div class="form-content">
             <div class="labels">
               <label for="title">Title</label>
@@ -33,7 +36,7 @@
               <input type="text" id="title" placeholder="Cat in the Hat" />
               <input type="text" id="author" placeholder="Dr. Seuss" />
               <input type="text" id="page-count" placeholder="287" />
-              <label class="checkbox">
+              <label class="checkbox" id="modal-checkbox">
                 <input type="checkbox" id="finished" />
                 <span></span>
               </label>
@@ -51,19 +54,7 @@
     </div>
     <div class="books">
       <h1>The Bookshelf</h1>
-      <div class="row">
-        <div class="card">
-          <p class="card-content">The Expectation Effect</p>
-          <p class="card-content">by David Robson</p>
-          <label class="checkbox book-card">
-            <input type="checkbox">
-            <span class="finished">Finished</span>
-          </label>
-          <div class="card-buttons">
-            <button class="remove-book">Info</button>
-            <button class="remove-book">Remove</button>
-          </div>
-        </div>
+      <div class="row" id="card-row">
         <div class="card" id="new-book">
           <p id="add-book">+</p>
         </div>
