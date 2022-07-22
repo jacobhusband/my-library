@@ -55,7 +55,7 @@ function updateBookshelf(bookObj = undefined) {
   // Add all books to bookshelf
   library.forEach((book) => {
     // Create a counter for book objects
-    addToBookshelf(book.title, count);
+    addToBookshelf(book.title, count, book.finished);
     count++;
   });
 
@@ -77,7 +77,7 @@ function createAndAddPlusCard(rowElement) {
   rowElement.appendChild(newBookCardAddition);
 }
 
-function addToBookshelf(title, count) {
+function addToBookshelf(title, count, finished = false) {
   // Create DOM elements to make book card
   const card = document.createElement("div");
   const cardTitle = document.createElement("p");
@@ -90,6 +90,11 @@ function addToBookshelf(title, count) {
   const newBookCard = document.createElement("div");
   const addBookCard = document.createElement("p");
 
+  if (finished === true) {
+    checkboxInput.checked = true;
+    card.style.borderColor = "rgba(0, 95, 16, 0.5)";
+  }
+
   // Add classes, ids, and data types to elements
   card.className = "card";
   card.dataset.id = `${count}`;
@@ -97,6 +102,7 @@ function addToBookshelf(title, count) {
   cardTitle.textContent = title;
   checkboxLabel.className = "checkbox cardcheck";
   checkboxInput.type = "checkbox";
+  checkboxInput.className = "cardcheck";
   checkboxSpan.className = "finished";
   cardButtons.className = "card-buttons";
   cardInfoButton.className = "info-button card-button";
@@ -143,13 +149,12 @@ function listenForNewBook() {
 }
 
 function listenForCheckboxClicks() {
-  Array.from(document.getElementsByClassName("cardcheck")).forEach(
-    (checkbox) => {
-      checkbox.addEventListener("click", (event) => {
-        updateCardBorderColor(event);
-      });
-    }
-  );
+  let checkboxes = Array.from(document.getElementsByClassName("cardcheck"));
+  checkboxes[checkboxes.length - 1].addEventListener("click", (event) => {
+    let title = event.target.parentNode.parentNode.firstChild.textContent;
+    updateCardBorderColor(event);
+    searchLibraryByTitle(title, event.target.checked);
+  });
 }
 
 function listenForRemoveClicks() {
@@ -163,11 +168,32 @@ function listenForRemoveClicks() {
   });
 }
 
+function searchLibraryByTitle(title, finished) {
+  library.forEach((book) => {
+    if (book.title === title) {
+      book.finished = finished;
+    }
+  });
+}
+
+function listenForInfoClicks() {
+  let infoButtons = Array.from(document.getElementsByClassName("info-button"));
+  infoButtons[infoButtons.length - 1].addEventListener("click", (event) => {
+    let cardParent = event.currentTarget.parentNode.parentNode;
+    library.splice(cardParent.dataset.id - 1, 1);
+    updateBookshelf();
+  });
+}
+
+function populateModal() {}
+
 function updateCardBorderColor(event) {
   if (event.target.checked) {
-    event.currentTarget.parentNode.style.borderColor = "rgba(0, 95, 16, 0.5)";
+    event.currentTarget.parentNode.parentNode.style.borderColor =
+      "rgba(0, 95, 16, 0.5)";
   } else {
-    event.currentTarget.parentNode.style.borderColor = "rgba(255, 2, 2, 0.5)";
+    event.currentTarget.parentNode.parentNode.style.borderColor =
+      "rgba(255, 2, 2, 0.5)";
   }
 }
 
