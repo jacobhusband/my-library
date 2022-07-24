@@ -1,4 +1,5 @@
-const addBookButton = document.getElementById("submit");
+const addBookButton = document.getElementsByClassName("modal-button")[0];
+const updateBookButton = document.getElementsByClassName("modal-button")[1];
 const title = document.getElementById("title");
 const author = document.getElementById("author");
 const pageCount = document.getElementById("page-count");
@@ -8,17 +9,29 @@ const modal = document.getElementById("myModal");
 const closeModal = document.getElementById("close-modal");
 
 let library = [];
+let count = 0;
+
+updateBookButton.addEventListener("click", (event) => {
+  updateBookInfo(index, event);
+});
 
 addBookButton.addEventListener("click", (event) => {
-  // Update book object
+  // Create unique id for the book
+  count++;
+
+  // Create book object
   let bookObj = {
     title: title.value,
     author: author.value,
     pageCount: pageCount.value,
     finished: finished.checked,
     summary: summary.value,
+    id: count,
   };
-  updateBookshelf(bookObj);
+
+  // Send book object and id to the bookshelf
+  updateBookshelf(bookObj, count);
+
   // Hide modal
   modal.style.display = "none";
 });
@@ -35,33 +48,48 @@ window.onclick = function (event) {
   }
 };
 
-function updateBookshelf(bookObj = undefined) {
-  let count = 1;
+function updateBookInfo(index, event) {
+  const titleNode = event.currentTarget.parentNode.firstElementChild;
+  const authorNode = titleNode.nextElementSibling;
+  const pageCountNode = authorNode.nextElementSibling;
+  const finishedNode = pageCountNode.nextElementSibling;
+  const summaryNode = finishedNode.nextElementSibling;
+  library[index].title = titleNode.value;
+  library[index].author = authorNode.value;
+  library[index].pageCount = pageCountNode.value;
+  library[index].finished = finishedNode.firstElementChild.checked;
+  library[index].summary = summaryNode.value;
+  modal.style.display = "none";
+  addBookButton.style.display = "block";
+  updateBookButton.style.display = "none";
+  updateBookshelf(undefined, library[index].id);
+}
 
-  if (bookObj !== undefined) {
+function updateBookshelf(bookObj = undefined, count) {
+  if (bookObj != undefined) {
     // Add book object to library
     library.push(bookObj);
   }
 
-  // Remove all cards from bookshelf
-  const rowElement = document.getElementsByClassName("row")[0];
-  let cardElements = Array.from(document.getElementsByClassName("card"));
-  cardElements.forEach((card) => {
-    rowElement.removeChild(card);
+  // Remove all books from bookshelf
+  Array.from(document.getElementsByClassName("card")).forEach((card) => {
+    document.getElementsByClassName("row")[0].removeChild(card);
   });
 
   // Add all books to bookshelf
   library.forEach((book) => {
-    // Create a counter for book objects
-    addToBookshelf(book.title, count, book.finished);
-    count++;
+    addToBookshelf(book.title, book.id, book.finished);
+    // Add event listeners
+    listenForCheckboxClicks();
+    listenForInfoClicks();
+    listenForRemoveClicks();
   });
 
-  createAndAddPlusCard(rowElement);
-  listenForNewBook();
+  // Add plus card
+  createAndAddPlusCard();
 }
 
-function createAndAddPlusCard(rowElement) {
+function createAndAddPlusCard() {
   // Create plus card
   const newBookCardAddition = document.createElement("div");
   const newBookParagraphAddition = document.createElement("p");
@@ -72,7 +100,8 @@ function createAndAddPlusCard(rowElement) {
 
   // Add plus card
   newBookCardAddition.appendChild(newBookParagraphAddition);
-  rowElement.appendChild(newBookCardAddition);
+  document.getElementsByClassName("row")[0].appendChild(newBookCardAddition);
+  listenForNewBook();
 }
 
 function addToBookshelf(title, count, finished = false) {
@@ -120,17 +149,14 @@ function addToBookshelf(title, count, finished = false) {
   cardButtons.append(cardInfoButton, cardRemoveButton);
   card.append(cardTitle, checkboxLabel, cardButtons);
   newBookRowElement.appendChild(card);
-
-  // Add event listeners for the new book and all the checkboxes
-  listenForCheckboxClicks();
-  listenForInfoClicks();
-  listenForRemoveClicks();
 }
 
 function listenForNewBook() {
   let newBook = document.getElementById("new-book");
   newBook.addEventListener("click", (event) => {
-    modal.style.display = "block";
+    emptyModalInputs();
+    showModal();
+    showAddBookModalView();
   });
 }
 
@@ -148,8 +174,16 @@ function listenForRemoveClicks() {
     document.getElementsByClassName("remove-button")
   );
   removeButtons[removeButtons.length - 1].addEventListener("click", (event) => {
-    let cardParent = event.currentTarget.parentNode.parentNode;
-    library.splice(cardParent.dataset.id - 1, 1);
+    // Save the data id of the card clicked
+    let currentCardId = event.target.parentNode.parentNode.dataset.id;
+
+    // Find the index where the id of the book in the library matches the id of the card
+    index = findIndexOfBook(currentCardId);
+
+    // Remove the book with the matching id from the library
+    library.splice(index, 1);
+
+    // Show the new list of books
     updateBookshelf();
   });
 }
@@ -157,29 +191,30 @@ function listenForRemoveClicks() {
 function listenForInfoClicks() {
   let infoButtons = Array.from(document.getElementsByClassName("info-button"));
   infoButtons[infoButtons.length - 1].addEventListener("click", (event) => {
-    let cardParent =
-      event.currentTarget.parentNode.parentNode.getAttribute("data-id");
-    console.log(cardParent);
     // Open modal
     modal.style.display = "block";
 
-    // Change button from add book to update book and title to Book Information
+    // Find ID
+    let currentCardId = event.currentTarget.parentNode.parentNode.dataset.id;
+
+    // Find index
+    index = findIndexOfBook(currentCardId);
+
+    // Change  title to Book Information
     document.getElementsByClassName("modal-title")[0].textContent =
       "Book Information";
 
-    document.getElementById("submit").textContent = "Update Book";
+    // Hide Add book button
+    addBookButton.style.display = "none";
 
-    // Remove the event listener
+    // Show Update book button
+    updateBookButton.style.display = "block";
 
-    // Add a new event listener
+    // Take info from library and change modal inputs
+    updateModal(library[index]);
 
     // Update the info into the library array
-
-    // Close modal
-
-    // Change button to say add book from update book
-
-    updateBookshelf();
+    updateBookInfo(index);
   });
 }
 
@@ -191,8 +226,6 @@ function searchLibraryByTitle(title, finished) {
   });
 }
 
-function populateModal() {}
-
 function updateCardBorderColor(event) {
   if (event.target.checked) {
     event.currentTarget.parentNode.parentNode.style.borderColor =
@@ -201,6 +234,40 @@ function updateCardBorderColor(event) {
     event.currentTarget.parentNode.parentNode.style.borderColor =
       "rgba(255, 2, 2, 0.5)";
   }
+}
+
+function emptyModalInputs() {
+  title.value = "";
+  author.value = "";
+  pageCount.value = "";
+  finished.checked = false;
+  summary.value = "";
+}
+
+function showModal() {
+  modal.style.display = "block";
+}
+
+function showAddBookModalView() {
+  document.getElementById("title").innerHTML = "New Book";
+  document.getElementById("update-book-button").style.display = "none";
+  document.getElementById("add-book-button").style.display = "block";
+}
+
+function findIndexOfBook(id) {
+  for (let i = 0; i < library.length; i++) {
+    if (id == library[i].id) {
+      return i;
+    }
+  }
+}
+
+function updateModal(bookObj) {
+  title.value = bookObj.title;
+  author.value = bookObj.author;
+  pageCount.value = bookObj.pageCount;
+  finished.checked = bookObj.finished;
+  summary.value = bookObj.summary;
 }
 
 listenForNewBook();
