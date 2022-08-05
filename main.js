@@ -15,18 +15,6 @@ class Bookshelf {
     this.cards = [];
   }
 
-  addNewBookListener(func) {
-    Bookshelf.newBook.addEventListener("click", func);
-  }
-
-  addBookButtonListener(func) {
-    Modal.addBook.addEventListener("click", func.bind(this));
-  }
-
-  updateBookButtonListener(func) {
-    Modal.updateBook.addEventListener("click", func.bind(this));
-  }
-
   createNewCard() {
     let card = new Card(
       Modal.title.value,
@@ -62,29 +50,16 @@ class Card {
     this.pageCount = pageCount;
     this.finished = finished;
     this.summary = summary;
-    this.createDOMElements();
-    this.modifyDOMElements();
-    this.addDOMElementsToBookshelf();
+    this.createDOM();
+    this.modifyDOM();
+    this.addDOM();
 
-    // Listeners
-    // Remove button
-    this.cardRemoveButton.addEventListener(
-      "click",
-      this.removeDOMElementsFromBookshelf.bind(this)
-    );
-    this.cardRemoveButton.addEventListener(
-      "click",
-      bookshelf.removeCard.bind(this)
-    );
-
-    // Info button
-    this.cardInfoButton.addEventListener(
-      "click",
-      this.showInfoModal.bind(this)
-    );
+    this.remButton.addEventListener("click", this.remDOM.bind(this));
+    this.remButton.addEventListener("click", bookshelf.removeCard.bind(this));
+    this.infButton.addEventListener("click", this.showInfoModal.bind(this));
   }
 
-  createDOMElements() {
+  createDOM() {
     // Create DOM elements to make book card
     this.card = document.createElement("div");
     this.cardTitle = document.createElement("p");
@@ -92,11 +67,11 @@ class Card {
     this.checkboxInput = document.createElement("input");
     this.checkboxSpan = document.createElement("span");
     this.cardButtons = document.createElement("div");
-    this.cardInfoButton = document.createElement("button");
-    this.cardRemoveButton = document.createElement("button");
+    this.infButton = document.createElement("button");
+    this.remButton = document.createElement("button");
   }
 
-  modifyDOMElements() {
+  modifyDOM() {
     if (this.finished) {
       this.checkboxInput.checked = true;
       this.card.style.borderColor = "rgba(0, 95, 16, 0.5)";
@@ -111,16 +86,16 @@ class Card {
     this.checkboxInput.className = "cardcheck";
     this.checkboxSpan.className = "finished";
     this.cardButtons.className = "card-buttons";
-    this.cardInfoButton.className = "info-button card-button";
-    this.cardInfoButton.textContent = "Info";
-    this.cardRemoveButton.className = "remove-button card-button";
-    this.cardRemoveButton.textContent = "Remove";
+    this.infButton.className = "info-button card-button";
+    this.infButton.textContent = "Info";
+    this.remButton.className = "remove-button card-button";
+    this.remButton.textContent = "Remove";
   }
 
-  addDOMElementsToBookshelf() {
+  addDOM() {
     // Add card DOM structure and append to parent
     this.checkboxLabel.append(this.checkboxInput, this.checkboxSpan);
-    this.cardButtons.append(this.cardInfoButton, this.cardRemoveButton);
+    this.cardButtons.append(this.infButton, this.remButton);
     this.card.append(this.cardTitle, this.checkboxLabel, this.cardButtons);
     Bookshelf.cardRow.insertBefore(this.card, Bookshelf.newBook);
 
@@ -134,7 +109,7 @@ class Card {
     });
   }
 
-  removeDOMElementsFromBookshelf() {
+  remDOM() {
     Bookshelf.cardRow.removeChild(this.card);
   }
 
@@ -145,7 +120,6 @@ class Card {
   }
 }
 
-// Create a super class for modal
 class Modal {
   static dom = document.getElementById("modal");
   static addBook = this.dom.querySelector("#add-book-button");
@@ -159,7 +133,6 @@ class Modal {
 
   constructor() {
     this.keywords = ["title", "author", "page-count", "summary"];
-    this.addListeners();
   }
 
   showModal() {
@@ -168,20 +141,14 @@ class Modal {
     modal.changeText(false);
   }
 
-  addListeners() {
-    for (let word of this.keywords) {
-      Modal.dom
-        .querySelector(`#${word}`)
-        .addEventListener("keypress", (event) => {
-          if (event.key === "Enter") {
-            if (Modal.addBook.style.display === "block") {
-              bookshelf.createNewCard();
-            } else {
-              bookshelf.updateCard();
-            }
-            modal.hideModal();
-          }
-        });
+  checkDisplay(e) {
+    if (e.key === "Enter") {
+      if (Modal.addBook.style.display === "block") {
+        bookshelf.createNewCard();
+      } else {
+        bookshelf.updateCard();
+      }
+      modal.hideModal();
     }
   }
 
@@ -206,18 +173,6 @@ class Modal {
     }
   }
 
-  addBookButtonListener(func) {
-    Modal.addBook.addEventListener("click", func.bind(this));
-  }
-
-  updateBookButtonListener(func) {
-    Modal.updateBook.addEventListener("click", func.bind(this));
-  }
-
-  closeModalButtonListener(func) {
-    Modal.xButton.addEventListener("click", func.bind(this));
-  }
-
   changeText(updateInfo) {
     if (updateInfo) {
       Modal.dom.querySelector("h1.modal-title").textContent = "Update Info";
@@ -237,14 +192,34 @@ class Modal {
   }
 }
 
+class ListenerController {
+  constructor() {
+    this.addEList(Bookshelf.newBook, modal.showModal, "click", undefined);
+    this.addEList(Modal.addBook, bookshelf.createNewCard, "click", bookshelf);
+    this.addEList(Modal.addBook, modal.hideModal, "click", modal);
+    this.addEList(Modal.updateBook, bookshelf.updateCard, "click", undefined);
+    this.addEList(Modal.updateBook, modal.hideModal, "click", modal);
+    this.addEList(Modal.xButton, modal.hideModal, "click", modal);
+    this.addEList(Modal.title, modal.checkDisplay, "keypress", modal);
+    this.addEList(Modal.author, modal.checkDisplay, "keypress", modal);
+    this.addEList(Modal.pageCount, modal.checkDisplay, "keypress", modal);
+    this.addEList(Modal.summary, modal.checkDisplay, "keypress", modal);
+  }
+
+  addEList(element, func, type, bindObj) {
+    element.addEventListener(type, func.bind(bindObj));
+  }
+
+  // groupEList(elements, funcs, types, bindObjs) {
+  //   let index;
+  //   for (let element of elements) {
+  //     index = elements.indexOf(element);
+  //     this.addEList(element, funcs[index], types[index], bindObjs[index]);
+  //   }
+  // }
+}
+
 // Create instances
 let bookshelf = new Bookshelf();
 let modal = new Modal();
-
-// Add listeners
-bookshelf.addNewBookListener(modal.showModal);
-bookshelf.addBookButtonListener(bookshelf.createNewCard);
-modal.addBookButtonListener(modal.hideModal);
-bookshelf.updateBookButtonListener(bookshelf.updateCard);
-modal.updateBookButtonListener(modal.hideModal);
-modal.closeModalButtonListener(modal.hideModal);
+let listener = new ListenerController();
