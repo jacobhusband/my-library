@@ -1,273 +1,250 @@
-const addBookButton = document.getElementsByClassName("modal-button")[0];
-const updateBookButton = document.getElementsByClassName("modal-button")[1];
-const title = document.getElementById("title");
-const author = document.getElementById("author");
-const pageCount = document.getElementById("page-count");
-const finished = document.getElementById("finished");
-const summary = document.getElementById("summary");
-const modal = document.getElementById("myModal");
-const closeModal = document.getElementById("close-modal");
-
-let library = [];
-let count = 0;
-
-updateBookButton.addEventListener("click", (event) => {
-  updateBookInfo(index, event);
+// Wait for the window to load
+window.addEventListener("load", (event) => {
+  console.log("page is fully loaded");
 });
 
-addBookButton.addEventListener("click", (event) => {
-  // Create unique id for the book
-  count++;
+// Blueprint for making the library with classes
 
-  // Create book object
-  let bookObj = {
-    title: title.value,
-    author: author.value,
-    pageCount: pageCount.value,
-    finished: finished.checked,
-    summary: summary.value,
-    id: count,
-  };
+// Create a class for the bookshelf
+class Bookshelf {
+  static dom = document.getElementById("bookshelf");
+  static newBook = this.dom.querySelector("#new-book");
+  static cardRow = this.dom.querySelector("#card-row");
 
-  // Send book object and id to the bookshelf
-  updateBookshelf(bookObj, count);
-
-  // Hide modal
-  modal.style.display = "none";
-});
-
-// When the user clicks on <span> (x), close the modal
-closeModal.onclick = function () {
-  modal.style.display = "none";
-};
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
-
-function updateBookInfo(index, event) {
-  const titleNode = event.currentTarget.parentNode.firstElementChild;
-  const authorNode = titleNode.nextElementSibling;
-  const pageCountNode = authorNode.nextElementSibling;
-  const finishedNode = pageCountNode.nextElementSibling;
-  const summaryNode = finishedNode.nextElementSibling;
-  library[index].title = titleNode.value;
-  library[index].author = authorNode.value;
-  library[index].pageCount = pageCountNode.value;
-  library[index].finished = finishedNode.firstElementChild.checked;
-  library[index].summary = summaryNode.value;
-  modal.style.display = "none";
-  addBookButton.style.display = "block";
-  updateBookButton.style.display = "none";
-  updateBookshelf(undefined, library[index].id);
-}
-
-function updateBookshelf(bookObj = undefined, count) {
-  if (bookObj != undefined) {
-    // Add book object to library
-    library.push(bookObj);
+  constructor() {
+    this.cards = [];
   }
 
-  // Remove all books from bookshelf
-  Array.from(document.getElementsByClassName("card")).forEach((card) => {
-    document.getElementsByClassName("row")[0].removeChild(card);
-  });
-
-  // Add all books to bookshelf
-  library.forEach((book) => {
-    addToBookshelf(book.title, book.id, book.finished);
-    // Add event listeners
-    listenForCheckboxClicks();
-    listenForInfoClicks();
-    listenForRemoveClicks();
-  });
-
-  // Add plus card
-  createAndAddPlusCard();
-}
-
-function createAndAddPlusCard() {
-  // Create plus card
-  const newBookCardAddition = document.createElement("div");
-  const newBookParagraphAddition = document.createElement("p");
-  newBookCardAddition.className = "card";
-  newBookCardAddition.id = "new-book";
-  newBookParagraphAddition.id = "add-book";
-  newBookParagraphAddition.textContent = "+";
-
-  // Add plus card
-  newBookCardAddition.appendChild(newBookParagraphAddition);
-  document.getElementsByClassName("row")[0].appendChild(newBookCardAddition);
-  listenForNewBook();
-}
-
-function addToBookshelf(title, count, finished = false) {
-  // Create DOM elements to make book card
-  const card = document.createElement("div");
-  const cardTitle = document.createElement("p");
-  const checkboxLabel = document.createElement("label");
-  const checkboxInput = document.createElement("input");
-  const checkboxSpan = document.createElement("span");
-  const cardButtons = document.createElement("div");
-  const cardInfoButton = document.createElement("button");
-  const cardRemoveButton = document.createElement("button");
-  const newBookCard = document.createElement("div");
-  const addBookCard = document.createElement("p");
-
-  if (finished === true) {
-    checkboxInput.checked = true;
-    card.style.borderColor = "rgba(0, 95, 16, 0.5)";
+  addNewBookListener(func) {
+    Bookshelf.newBook.addEventListener("click", func);
   }
 
-  // Add classes, ids, and data types to elements
-  card.className = "card";
-  card.dataset.id = `${count}`;
-  cardTitle.className = "card-content";
-  cardTitle.textContent = title;
-  checkboxLabel.className = "checkbox cardcheck";
-  checkboxInput.type = "checkbox";
-  checkboxInput.className = "cardcheck";
-  checkboxSpan.className = "finished";
-  cardButtons.className = "card-buttons";
-  cardInfoButton.className = "info-button card-button";
-  cardInfoButton.textContent = "Info";
-  cardRemoveButton.className = "remove-button card-button";
-  cardRemoveButton.textContent = "Remove";
-  newBookCard.className = "card";
-  newBookCard.id = "new-book";
-  addBookCard.id = "add-book";
-  addBookCard.textContent = "+";
+  addBookButtonListener(func) {
+    Modal.addBook.addEventListener("click", func.bind(this));
+  }
 
-  // Grab row element
-  const newBookRowElement = document.getElementsByClassName("row")[0];
+  updateBookButtonListener(func) {
+    Modal.updateBook.addEventListener("click", func.bind(this));
+  }
 
-  // Add card DOM structure and append to parent
-  checkboxLabel.append(checkboxInput, checkboxSpan);
-  cardButtons.append(cardInfoButton, cardRemoveButton);
-  card.append(cardTitle, checkboxLabel, cardButtons);
-  newBookRowElement.appendChild(card);
+  createNewCard() {
+    let card = new Card(
+      Modal.title.value,
+      Modal.author.value,
+      Modal.pageCount.value,
+      Modal.finished.checked,
+      Modal.summary.value
+    );
+    this.cards.push(card);
+  }
+
+  updateCard() {
+    modal.currentCard.title = Modal.title.value;
+    modal.currentCard.author = Modal.author.value;
+    modal.currentCard.pageCount = Modal.pageCount.value;
+    modal.currentCard.finished = Modal.finished.checked;
+    modal.currentCard.summary = Modal.summary.value;
+
+    modal.currentCard.modifyDOMElements();
+  }
+
+  removeCard() {
+    let index = bookshelf.cards.indexOf(this);
+    bookshelf.cards.splice(index, 1);
+  }
 }
 
-function listenForNewBook() {
-  let newBook = document.getElementById("new-book");
-  newBook.addEventListener("click", (event) => {
-    emptyModalInputs();
-    showModal();
-    showAddBookModalView();
-  });
-}
+// Create a class for the card
+class Card {
+  constructor(title, author, pageCount, finished, summary) {
+    this.title = title;
+    this.author = author;
+    this.pageCount = pageCount;
+    this.finished = finished;
+    this.summary = summary;
+    this.createDOMElements();
+    this.modifyDOMElements();
+    this.addDOMElementsToBookshelf();
 
-function listenForCheckboxClicks() {
-  let checkboxes = Array.from(document.getElementsByClassName("cardcheck"));
-  checkboxes[checkboxes.length - 1].addEventListener("click", (event) => {
-    let title = event.target.parentNode.parentNode.firstChild.textContent;
-    updateCardBorderColor(event);
-    searchLibraryByTitle(title, event.target.checked);
-  });
-}
+    // Listeners
+    // Remove button
+    this.cardRemoveButton.addEventListener(
+      "click",
+      this.removeDOMElementsFromBookshelf.bind(this)
+    );
+    this.cardRemoveButton.addEventListener(
+      "click",
+      bookshelf.removeCard.bind(this)
+    );
 
-function listenForRemoveClicks() {
-  let removeButtons = Array.from(
-    document.getElementsByClassName("remove-button")
-  );
-  removeButtons[removeButtons.length - 1].addEventListener("click", (event) => {
-    // Save the data id of the card clicked
-    let currentCardId = event.target.parentNode.parentNode.dataset.id;
+    // Info button
+    this.cardInfoButton.addEventListener(
+      "click",
+      this.showInfoModal.bind(this)
+    );
+  }
 
-    // Find the index where the id of the book in the library matches the id of the card
-    index = findIndexOfBook(currentCardId);
+  createDOMElements() {
+    // Create DOM elements to make book card
+    this.card = document.createElement("div");
+    this.cardTitle = document.createElement("p");
+    this.checkboxLabel = document.createElement("label");
+    this.checkboxInput = document.createElement("input");
+    this.checkboxSpan = document.createElement("span");
+    this.cardButtons = document.createElement("div");
+    this.cardInfoButton = document.createElement("button");
+    this.cardRemoveButton = document.createElement("button");
+  }
 
-    // Remove the book with the matching id from the library
-    library.splice(index, 1);
-
-    // Show the new list of books
-    updateBookshelf();
-  });
-}
-
-function listenForInfoClicks() {
-  let infoButtons = Array.from(document.getElementsByClassName("info-button"));
-  infoButtons[infoButtons.length - 1].addEventListener("click", (event) => {
-    // Open modal
-    modal.style.display = "block";
-
-    // Find ID
-    let currentCardId = event.currentTarget.parentNode.parentNode.dataset.id;
-
-    // Find index
-    index = findIndexOfBook(currentCardId);
-
-    // Change  title to Book Information
-    document.getElementsByClassName("modal-title")[0].textContent =
-      "Book Information";
-
-    // Hide Add book button
-    addBookButton.style.display = "none";
-
-    // Show Update book button
-    updateBookButton.style.display = "block";
-
-    // Take info from library and change modal inputs
-    updateModal(library[index]);
-
-    // Update the info into the library array
-    updateBookInfo(index);
-  });
-}
-
-function searchLibraryByTitle(title, finished) {
-  library.forEach((book) => {
-    if (book.title === title) {
-      book.finished = finished;
+  modifyDOMElements() {
+    if (this.finished) {
+      this.checkboxInput.checked = true;
+      this.card.style.borderColor = "rgba(0, 95, 16, 0.5)";
     }
-  });
-}
 
-function updateCardBorderColor(event) {
-  if (event.target.checked) {
-    event.currentTarget.parentNode.parentNode.style.borderColor =
-      "rgba(0, 95, 16, 0.5)";
-  } else {
-    event.currentTarget.parentNode.parentNode.style.borderColor =
-      "rgba(255, 2, 2, 0.5)";
+    // Add classes, ids, and data types to elements
+    this.card.className = "card";
+    this.cardTitle.className = "card-content";
+    this.cardTitle.textContent = this.title;
+    this.checkboxLabel.className = "checkbox cardcheck";
+    this.checkboxInput.type = "checkbox";
+    this.checkboxInput.className = "cardcheck";
+    this.checkboxSpan.className = "finished";
+    this.cardButtons.className = "card-buttons";
+    this.cardInfoButton.className = "info-button card-button";
+    this.cardInfoButton.textContent = "Info";
+    this.cardRemoveButton.className = "remove-button card-button";
+    this.cardRemoveButton.textContent = "Remove";
+  }
+
+  addDOMElementsToBookshelf() {
+    // Add card DOM structure and append to parent
+    this.checkboxLabel.append(this.checkboxInput, this.checkboxSpan);
+    this.cardButtons.append(this.cardInfoButton, this.cardRemoveButton);
+    this.card.append(this.cardTitle, this.checkboxLabel, this.cardButtons);
+    Bookshelf.cardRow.insertBefore(this.card, Bookshelf.newBook);
+
+    // Give the checkbox a listener
+    this.checkboxInput.addEventListener("input", () => {
+      if (this.checkboxInput.checked) {
+        this.card.style.borderColor = "rgba(0, 95, 16, 0.5)";
+      } else {
+        this.card.style.borderColor = "rgba(255, 2, 2, 0.5)";
+      }
+    });
+  }
+
+  removeDOMElementsFromBookshelf() {
+    Bookshelf.cardRow.removeChild(this.card);
+  }
+
+  showInfoModal() {
+    modal.showModal();
+    modal.changeText(true);
+    modal.populateInputs(this);
   }
 }
 
-function emptyModalInputs() {
-  title.value = "";
-  author.value = "";
-  pageCount.value = "";
-  finished.checked = false;
-  summary.value = "";
-}
+// Create a super class for modal
+class Modal {
+  static dom = document.getElementById("modal");
+  static addBook = this.dom.querySelector("#add-book-button");
+  static updateBook = this.dom.querySelector("#update-book-button");
+  static xButton = this.dom.querySelector("#close-modal");
+  static title = this.dom.querySelector("#title");
+  static author = this.dom.querySelector("#author");
+  static pageCount = this.dom.querySelector("#page-count");
+  static finished = this.dom.querySelector("#finished");
+  static summary = this.dom.querySelector("#summary");
 
-function showModal() {
-  modal.style.display = "block";
-}
+  constructor() {
+    this.keywords = ["title", "author", "page-count", "summary"];
+    this.addListeners();
+  }
 
-function showAddBookModalView() {
-  document.getElementById("title").innerHTML = "New Book";
-  document.getElementById("update-book-button").style.display = "none";
-  document.getElementById("add-book-button").style.display = "block";
-}
+  showModal() {
+    Modal.dom.style.display = "block";
+    Modal.dom.querySelector("#title").focus();
+    modal.changeText(false);
+  }
 
-function findIndexOfBook(id) {
-  for (let i = 0; i < library.length; i++) {
-    if (id == library[i].id) {
-      return i;
+  addListeners() {
+    for (let word of this.keywords) {
+      Modal.dom
+        .querySelector(`#${word}`)
+        .addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            if (Modal.addBook.style.display === "block") {
+              bookshelf.createNewCard();
+            } else {
+              bookshelf.updateCard();
+            }
+            modal.hideModal();
+          }
+        });
     }
   }
+
+  hideModal() {
+    Modal.dom.style.display = "none";
+    this.changeModalInput(["", "", "", ""], false);
+  }
+
+  changeModalInput(values, checked) {
+    for (const word of this.keywords) {
+      Modal.dom.querySelector(`#${word}`).value =
+        values[this.keywords.indexOf(word)];
+    }
+    Modal.dom.querySelector(`#finished`).checked = checked;
+  }
+
+  getModalInput(id) {
+    if (Modal.dom.querySelector(`#${id}`).value) {
+      Modal.dom.querySelector(`#${id}`).value;
+    } else {
+      Modal.dom.querySelector(`#${id}`).checked;
+    }
+  }
+
+  addBookButtonListener(func) {
+    Modal.addBook.addEventListener("click", func.bind(this));
+  }
+
+  updateBookButtonListener(func) {
+    Modal.updateBook.addEventListener("click", func.bind(this));
+  }
+
+  closeModalButtonListener(func) {
+    Modal.xButton.addEventListener("click", func.bind(this));
+  }
+
+  changeText(updateInfo) {
+    if (updateInfo) {
+      Modal.dom.querySelector("h1.modal-title").textContent = "Update Info";
+      Modal.addBook.style.display = "none";
+      Modal.updateBook.style.display = "block";
+    } else {
+      Modal.dom.querySelector("h1.modal-title").textContent = "New Book";
+      Modal.addBook.style.display = "block";
+      Modal.updateBook.style.display = "none";
+    }
+  }
+
+  populateInputs(card) {
+    const arr = [card.title, card.author, card.pageCount, card.summary];
+    this.changeModalInput(arr, card.checked);
+    this.currentCard = card;
+  }
 }
 
-function updateModal(bookObj) {
-  title.value = bookObj.title;
-  author.value = bookObj.author;
-  pageCount.value = bookObj.pageCount;
-  finished.checked = bookObj.finished;
-  summary.value = bookObj.summary;
-}
+// Create instances
+let bookshelf = new Bookshelf();
+let modal = new Modal();
 
-listenForNewBook();
+// Add listeners
+bookshelf.addNewBookListener(modal.showModal);
+bookshelf.addBookButtonListener(bookshelf.createNewCard);
+modal.addBookButtonListener(modal.hideModal);
+bookshelf.updateBookButtonListener(bookshelf.updateCard);
+modal.updateBookButtonListener(modal.hideModal);
+modal.closeModalButtonListener(modal.hideModal);
